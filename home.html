@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Costco Compass Table Management</title>
+</head>
+<body>
+    <h1>Multi-Table Management</h1>
+    <form method="POST" action="{{ url_for('home') }}">
+        {{ form.csrf_token }}
+        
+        <h2>Category</h2>
+        {{ form.category_id.label }} {{ form.category_id }}
+        {{ form.category_name.label }} {{ form.category_name }}
+        {{ form.add_category }} {{ form.delete_category }}
+
+        <!-- Add form fields for other tables (e.g., Customer, Employee, Inventory) -->
+
+    </form>
+
+    <h2>Category Table</h2>
+    <table>
+        <tr>
+            <th>Category ID</th>
+            <th>Category Name</th>
+        </tr>
+        {% for row in category_data %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Product Table</h2>
+    <table>
+        <tr>
+            <th>Product ID</th>
+            <th>Category Id</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+        </tr>
+        {% for row in product_data %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Add table data for other tables (e.g., Customer, Employee, Inventory) -->
+
+</body>
+</html>
