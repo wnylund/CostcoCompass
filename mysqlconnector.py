@@ -21,8 +21,9 @@ class AddDeleteForm(FlaskForm):
     category_id = StringField('Category ID')
     category_name = StringField('Category Name')
     #Product 
+    # Fields for Product table
     product_id = StringField('Product ID')
-    #cat_id
+    category_id_2 = StringField('Category ID')
     name = StringField('Name')
     description = StringField('Description')
     price = StringField('Price')
@@ -31,8 +32,8 @@ class AddDeleteForm(FlaskForm):
     add_category = SubmitField('Add Category')
     delete_category = SubmitField('Delete Category')
 
-    # add_product = SubmitField('Add Product')
-    # delete_product = SubmitField('Delete Product')
+    add_product = SubmitField('Add Product')
+    delete_product = SubmitField('Delete Product')
 
 
 
@@ -54,19 +55,19 @@ def home():
             mycursor.execute(sql, values)
             mydb.commit()
         
-        # # Add/Delete Product
-        # if form.add_product.data:
-        #     print("in add here")
-        #     sql = "INSERT INTO Product (product_id, category_id, name, description, price) VALUES (%s, %s, %s, %s, %s)"
-        #     values = (form.product_id.data, form.category_id.data, form.name.data, form.description.data, form.price.data)
-        #     mycursor.execute(sql, values)
-        #     mydb.commit()
-        # elif form.delete_product.data:
-        #     print("in delete here")
-        #     sql = "DELETE FROM Product WHERE product_id = %s"
-        #     values = (form.product_id.data,)
-        #     mycursor.execute(sql, values)
-        #     mydb.commit()
+        # Add/Delete Product
+        if form.add_product.data:
+            print("in add here")
+            sql = "INSERT INTO Product (product_id, category_id, name, description, price) VALUES (%s, %s, %s, %s, %s)"
+            values = (form.product_id.data, form.category_id_2.data, form.name.data, form.description.data, form.price.data)
+            mycursor.execute(sql, values)
+            mydb.commit()
+        elif form.delete_product.data:
+            print("in delete here")
+            sql = "DELETE FROM Product WHERE product_id = %s"
+            values = (form.product_id.data,)
+            mycursor.execute(sql, values)
+            mydb.commit()
 
         # Add/Delete logic for other tables (e.g., Customer, Employee, Inventory)
 
