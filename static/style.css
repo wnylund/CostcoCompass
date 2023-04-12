@@ -1,0 +1,59 @@
+:root {
+    --primary-color: #dcf2ec;
+    --secondary-color: #9ec7c8;
+    --text-color: rgb(253, 245, 245);
+  }
+
+  body {
+    margin: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color);
+    background-color: #2e2e37;
+  }
+
+  h1, h2 {
+    color: var(--primary-color);
+  }
+
+  label{
+    color: #fff !important;
+  }
+
+  .form-label-white {
+    color: #fff !important;
+  }
+
+  .form-label, .form-control {
+    margin-bottom: 0.5rem;
+  }
+
+  .table-container {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .table {
+    color: var(--text-color);
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .table td{
+    color: var(--text-color)!important;
+
+  }
+
+  .btn {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+
+  .btn:hover {
+    background-color: var(--primary-color);
+  }
