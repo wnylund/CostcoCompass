@@ -7,9 +7,6 @@ from flask_bcrypt import Bcrypt
 from flask_login import login_user, current_user, logout_user, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import logging
-
-
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'williscool'
 bcrypt = Bcrypt(app)
@@ -38,17 +35,17 @@ class AddDeleteForm(FlaskForm):
     quantity = StringField('Quantity')
     store_id_inventory = StringField('Store ID')
 
-    #Customer (customer_id, email, name, join_date)
+    #Customer (customer_id, email, name, join_date) #HERE
 
-    #Employee (position, email, name, employee_id)
+    #Employee (position, email, name, employee_id) #HERE
 
-    #Product_order (customer_id, order_id, item, status, order_date)
+    #Product_order (customer_id, order_id, item, status, order_date) #HERE
 
-    #Sale (store_id, date, sale_id, revenue, quantity)
+    #Sale (store_id, date, sale_id, revenue, quantity) #HERE
 
-    #Store_Location (Inventory_id, store_id, contact_info, address)
+    #Store_Location (Inventory_id, store_id, contact_info, address) #HERE
 
-    #User (id, username, isadmin)
+    #User (id, username, isadmin) #HERE
 
     # Submit buttons
     add_category = SubmitField('Add Category')
@@ -174,38 +171,42 @@ def product():
         logging.exception('Error in inventory(): ' + str(e))
         return 'Error: ' + str(e), 500
 
-
+#HERE
 @app.route("/customer", methods=["GET", "POST"])
 def customer():
     form = AddDeleteForm()
     if form.validate_on_submit():
         mycursor = mydb.cursor()
 
+#HERE
 @app.route("/employee", methods=["GET", "POST"])
 def employee():
     form = AddDeleteForm()
     if form.validate_on_submit():
         mycursor = mydb.cursor()
 
-
+#HERE
 @app.route("/product_order", methods=["GET", "POST"])
 def product_order():
     form = AddDeleteForm()
     if form.validate_on_submit():
         mycursor = mydb.cursor()
 
+#HERE
 @app.route("/sale", methods=["GET", "POST"])
 def sale():
     form = AddDeleteForm()
     if form.validate_on_submit():
         mycursor = mydb.cursor()
 
+#HERE
 @app.route("/store_location", methods=["GET", "POST"])
 def store_location():
     form = AddDeleteForm()
     if form.validate_on_submit():
         mycursor = mydb.cursor()
 
+#HERE
 @app.route("/users", methods=["GET", "POST"])
 def users():
     form = AddDeleteForm()
