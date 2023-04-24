@@ -38,6 +38,17 @@ class AddDeleteForm(FlaskForm):
     quantity = StringField('Quantity')
     store_id_inventory = StringField('Store ID')
 
+    #Customer (customer_id, email, name, join_date)
+
+    #Employee (position, email, name, employee_id)
+
+    #Product_order (customer_id, order_id, item, status, order_date)
+
+    #Sale (store_id, date, sale_id, revenue, quantity)
+
+    #Store_Location (Inventory_id, store_id, contact_info, address)
+
+    #User (id, username, isadmin)
 
     # Submit buttons
     add_category = SubmitField('Add Category')
@@ -49,10 +60,29 @@ class AddDeleteForm(FlaskForm):
     add_inventory = SubmitField('Add Inventory')
     delete_inventory = SubmitField('Delete Inventory')
 
+    add_customer = SubmitField('Add Customer')
+    delete_customer = SubmitField('Delete Customer')
+
+    add_employee = SubmitField('Add Employee')
+    delete_employee = SubmitField('Delete Employee')
+
+    add_product_order = SubmitField('Add Product_order')
+    delete_product_order = SubmitField('Delete Product_order')
+
+    add_sale = SubmitField('Add Sale')
+    delete_sale = SubmitField('Delete Sale')
+
+    add_store_location = SubmitField('Add Store_Location')
+    delete_store_location = SubmitField('Delete Store_Location')
+
+    add_user = SubmitField('Add User')
+    delete_user = SubmitField('Delete User')
+
 @app.route('/')
 def index():
     return redirect(url_for('login'))
 
+#EXAMPLE
 @app.route("/category", methods=["GET", "POST"])
 def category():
     form = AddDeleteForm()
@@ -82,7 +112,67 @@ def category():
     except Exception as e:
         logging.exception('Error in category(): ' + str(e))
         return 'Error: ' + str(e), 500
+    
+#EXAMPLE
+@app.route("/inventory", methods=["GET", "POST"])
+def inventory():
+    try:
+        form = AddDeleteForm()
+        if form.validate_on_submit():
+            mycursor = mydb.cursor()
+            # Add/Delete Inventory
+            if form.add_inventory.data:
+                sql = "INSERT INTO Inventory (product_id, quantity, store_id) VALUES (%s, %s, %s)"
+                values = (form.product_id_inventory.data, form.quantity.data, form.store_id_inventory.data)
+                mycursor.execute(sql, values)
+                mydb.commit()
+            elif form.delete_inventory.data:
+                print("in delete")
+                sql = "DELETE FROM Inventory WHERE product_id = %s"
+                values = (form.product_id_inventory.data,)
+                print("values: ", values)
+                mycursor.execute(sql, values)
+                mydb.commit()
+            return redirect('/inventory')
+        mycursor = mydb.cursor()
+        
+        mycursor.execute("SELECT * FROM Inventory")
+        inventory_data = mycursor.fetchall()
+        return render_template('inventory.html', form=form, inventory_data=inventory_data) # Pass other table data to the template
+    except Exception as e:
+        logging.exception('Error in inventory(): ' + str(e))
+        return 'Error: ' + str(e), 500
+    
+@app.route("/product", methods=["GET", "POST"])
+def product():
+    try:
+        form = AddDeleteForm()
+        if form.validate_on_submit():
+            mycursor = mydb.cursor()
+            # Add/Delete Product
+            if form.add_product.data:
+                print("in add here")
+                sql = "INSERT INTO Product (product_id, category_id, name, description, price) VALUES (%s, %s, %s, %s, %s)"
+                values = (form.product_id.data, form.category_id_2.data, form.name.data, form.description.data, form.price.data)
+                mycursor.execute(sql, values)
+                mydb.commit()
+            elif form.delete_product.data:
+                print("in delete here")
+                sql = "DELETE FROM Product WHERE product_id = %s"
+                values = (form.product_id.data,)
+                mycursor.execute(sql, values)
+                mydb.commit()
 
+            return redirect('/product')
+        mycursor = mydb.cursor()
+
+        mycursor.execute("SELECT * FROM Product ORDER BY product_id")
+        product_data = mycursor.fetchall()
+
+        return render_template('product.html', form=form, product_data=product_data)
+    except Exception as e:
+        logging.exception('Error in inventory(): ' + str(e))
+        return 'Error: ' + str(e), 500
 
 
 @app.route("/customer", methods=["GET", "POST"])
@@ -97,53 +187,6 @@ def employee():
     if form.validate_on_submit():
         mycursor = mydb.cursor()
 
-@app.route("/inventory", methods=["GET", "POST"])
-def inventory():
-    form = AddDeleteForm()
-    if form.validate_on_submit():
-        mycursor = mydb.cursor()
-        # Add/Delete Inventory
-        if form.add_inventory.data:
-            sql = "INSERT INTO Inventory (product_id, quantity, store_id) VALUES (%s, %s)"
-            values = (form.product_id_inventory.data, form.quantity.data, form.store_id_inventory.data)
-            mycursor.execute(sql, values)
-            mydb.commit()
-        elif form.delete_category.data:
-            sql = "DELETE FROM Inventory WHERE category_id = %s"
-            values = (form.product_id.data)
-            mycursor.execute(sql, values)
-            mydb.commit()
-
-    mycursor = mydb.cursor()
-    
-    mycursor.execute("SELECT * FROM Inventory")
-    inventory_data = mycursor.fetchall()
-    return render_template('inventory.html', form=form, inventory_data=inventory_data) # Pass other table data to the template
-
-@app.route("/product", methods=["GET", "POST"])
-def product():
-    form = AddDeleteForm()
-    if form.validate_on_submit():
-        mycursor = mydb.cursor()
-        # Add/Delete Product
-        if form.add_product.data:
-            print("in add here")
-            sql = "INSERT INTO Product (product_id, category_id, name, description, price) VALUES (%s, %s, %s, %s, %s)"
-            values = (form.product_id.data, form.category_id_2.data, form.name.data, form.description.data, form.price.data)
-            mycursor.execute(sql, values)
-            mydb.commit()
-        elif form.delete_product.data:
-            print("in delete here")
-            sql = "DELETE FROM Product WHERE product_id = %s"
-            values = (form.product_id.data,)
-            mycursor.execute(sql, values)
-            mydb.commit()
-    mycursor = mydb.cursor()
-
-    mycursor.execute("SELECT * FROM Product ORDER BY product_id")
-    product_data = mycursor.fetchall()
-
-    return render_template('product.html', form=form, product_data=product_data)
 
 @app.route("/product_order", methods=["GET", "POST"])
 def product_order():
