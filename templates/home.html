@@ -8,97 +8,19 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
-    <h1>Database Manager</h1>
-
-    <form method="POST" action="/">
-      {{ form.csrf_token }}
-      <div class="table-container">
-        <h2>Category</h2>
-        <table class="table table-bordered table-striped">
-          <thead>
-            <tr>
-              <th>Category ID</th>
-              <th>Category Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in category_data %}
-              <tr>
-                <td>{{ row[0] }}</td>
-                <td>{{ row[1] }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {{ form.category_id.label }}: {{ form.category_id }}
-        {{ form.category_name.label }}: {{ form.category_name }}
-        {{ form.add_category(class="btn") }}
-        {{ form.delete_category(class="btn") }}
-      </div>
-
-      <div class="table-container">
-        <h2>Product</h2>
-        <table class="table table-bordered table-striped">
-          <thead>
-            <tr>
-              <th>Product ID</th>
-              <th>Category ID</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in product_data %}
-              <tr>
-                <td>{{ row[0] }}</td>
-                <td>{{ row[1] }}</td>
-                <td>{{ row[2] }}</td>
-                <td>{{ row[3] }}</td>
-                <td>{{ row[4] }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {{ form.product_id.label }}: {{ form.product_id }}
-        {{ form.category_id_2.label }}: {{ form.category_id_2 }}
-        {{ form.name.label }}: {{ form.name }}
-        {{ form.description.label }}: {{ form.description }}
-        {{ form.price.label }}: {{ form.price }}
-        {{ form.add_product(class="btn") }}
-        {{ form.delete_product(class="btn") }}
-      </div>
-
-      <div class="table-container">
-        <h2>Inventory</h2>
-        <table class="table table-bordered table-striped">
-          <thead>
-            <tr>
-              <th>Product ID</th>
-              <th>Quantity</th>
-              <th>Store ID</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in inventory_data %}
-              <tr>
-                <td>{{ row[0] }}</td>
-                <td>{{ row[1] }}</td>
-                <td>{{ row[2] }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {{ form.product_id_inventory.label }}: {{ form.product_id_inventory }}
-        {{ form.quantity.label }}: {{ form.quantity }}
-        {{ form.store_id_inventory.label }}: {{ form.store_id_inventory }}
-        {{ form.add_inventory(class="btn") }}
-        {{ form.delete_inventory(class="btn") }}
-      </div>
-
-    </form>
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <h1 id="big-title">Database Manager</h1>
+    <br>
+    <div class="table-buttons">
+      <a href="{{ url_for('category') }}" class="btn btn-main">Categories</a>
+      <a href="{{ url_for('product') }}" class="btn btn-main">Products</a>
+      <a href="{{ url_for('customer') }}" class="btn btn-main">Customers</a>
+      <a href="{{ url_for('inventory') }}" class="btn btn-main">Inventory</a>
+      <a href="{{ url_for('product_order') }}" class="btn btn-main">Product Orders</a>
+      <a href="{{ url_for('sale') }}" class="btn btn-main">Sales</a>
+      <a href="{{ url_for('store_location') }}" class="btn btn-main">Store Locations</a>
+      <a href="{{ url_for('employee') }}" class="btn btn-main">Employees</a>
+      <a href="{{ url_for('users') }}" class="btn btn-main">Users (Admin)</a>
+    </div>
+    
   </body>
 </html>

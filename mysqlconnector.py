@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired
 from flask_bcrypt import Bcrypt
 from flask_login import login_user, current_user, logout_user, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+import logging
 
 
 
@@ -15,8 +16,8 @@ bcrypt = Bcrypt(app)
 
 mydb = mysql.connector.connect(
   host="127.0.0.1",
-  user="root",
-  password="test",
+  user="manager",
+  password="manager",
   database="costco"
 )
 
@@ -52,25 +53,78 @@ class AddDeleteForm(FlaskForm):
 def index():
     return redirect(url_for('login'))
 
+@app.route("/category", methods=["GET", "POST"])
+def category():
+    form = AddDeleteForm()
+    try:
+        if form.validate_on_submit():
+            mycursor = mydb.cursor()
 
-@app.route("/home", methods=["GET", "POST"])
-def home():
+        # Add/Delete Category
+            if form.add_category.data:
+                sql = "INSERT INTO Category (category_id, category_name) VALUES (%s, %s)"
+                values = (form.category_id.data, form.category_name.data)
+                mycursor.execute(sql, values)
+                mydb.commit()
+            elif form.delete_category.data:
+                sql = "DELETE FROM Category WHERE category_id = %s"
+                values = (form.category_id.data,)
+                mycursor.execute(sql, values)
+                mydb.commit()
+            return redirect('/category')
+
+        mycursor = mydb.cursor()
+
+        mycursor.execute("SELECT * FROM Category ORDER BY category_id")
+        category_data = mycursor.fetchall()
+
+        return render_template('category.html', form=form, category_data=category_data)
+    except Exception as e:
+        logging.exception('Error in category(): ' + str(e))
+        return 'Error: ' + str(e), 500
+
+
+
+@app.route("/customer", methods=["GET", "POST"])
+def customer():
     form = AddDeleteForm()
     if form.validate_on_submit():
         mycursor = mydb.cursor()
-        
-        # Add/Delete Category
-        if form.add_category.data:
-            sql = "INSERT INTO Category (category_id, category_name) VALUES (%s, %s)"
-            values = (form.category_id.data, form.category_name.data)
+
+@app.route("/employee", methods=["GET", "POST"])
+def employee():
+    form = AddDeleteForm()
+    if form.validate_on_submit():
+        mycursor = mydb.cursor()
+
+@app.route("/inventory", methods=["GET", "POST"])
+def inventory():
+    form = AddDeleteForm()
+    if form.validate_on_submit():
+        mycursor = mydb.cursor()
+        # Add/Delete Inventory
+        if form.add_inventory.data:
+            sql = "INSERT INTO Inventory (product_id, quantity, store_id) VALUES (%s, %s)"
+            values = (form.product_id_inventory.data, form.quantity.data, form.store_id_inventory.data)
             mycursor.execute(sql, values)
             mydb.commit()
         elif form.delete_category.data:
-            sql = "DELETE FROM Category WHERE category_id = %s"
-            values = (form.category_id.data,)
+            sql = "DELETE FROM Inventory WHERE category_id = %s"
+            values = (form.product_id.data)
             mycursor.execute(sql, values)
             mydb.commit()
-        
+
+    mycursor = mydb.cursor()
+    
+    mycursor.execute("SELECT * FROM Inventory")
+    inventory_data = mycursor.fetchall()
+    return render_template('inventory.html', form=form, inventory_data=inventory_data) # Pass other table data to the template
+
+@app.route("/product", methods=["GET", "POST"])
+def product():
+    form = AddDeleteForm()
+    if form.validate_on_submit():
+        mycursor = mydb.cursor()
         # Add/Delete Product
         if form.add_product.data:
             print("in add here")
@@ -84,38 +138,42 @@ def home():
             values = (form.product_id.data,)
             mycursor.execute(sql, values)
             mydb.commit()
-
-        # Add/Delete Inventory
-        if form.add_inventory.data:
-            sql = "INSERT INTO Inventory (product_id, quantity, store_id) VALUES (%s, %s)"
-            values = (form.product_id_inventory.data, form.quantity.data, form.store_id_inventory.data)
-            mycursor.execute(sql, values)
-            mydb.commit()
-        elif form.delete_category.data:
-            sql = "DELETE FROM Inventory WHERE category_id = %s"
-            values = (form.product_id.data)
-            mycursor.execute(sql, values)
-            mydb.commit()
-
-        # Add/Delete logic for other tables (e.g., Customer, Employee, Inventory)
-
-        return redirect('/')
-
-    # Fetch data for all tables
     mycursor = mydb.cursor()
 
-    mycursor.execute("SELECT * FROM Category")
-    category_data = mycursor.fetchall()
-
-    mycursor.execute("SELECT * FROM Product")
+    mycursor.execute("SELECT * FROM Product ORDER BY product_id")
     product_data = mycursor.fetchall()
 
-    mycursor.execute("SELECT * FROM Inventory")
-    inventory_data = mycursor.fetchall()
+    return render_template('product.html', form=form, product_data=product_data)
 
-    # Fetch data for other tables (e.g., Customer, Employee, Inventory)
-    return render_template('home.html', form=form, category_data=category_data, product_data=product_data, inventory_data=inventory_data) # Pass other table data to the template
+@app.route("/product_order", methods=["GET", "POST"])
+def product_order():
+    form = AddDeleteForm()
+    if form.validate_on_submit():
+        mycursor = mydb.cursor()
 
+@app.route("/sale", methods=["GET", "POST"])
+def sale():
+    form = AddDeleteForm()
+    if form.validate_on_submit():
+        mycursor = mydb.cursor()
+
+@app.route("/store_location", methods=["GET", "POST"])
+def store_location():
+    form = AddDeleteForm()
+    if form.validate_on_submit():
+        mycursor = mydb.cursor()
+
+@app.route("/users", methods=["GET", "POST"])
+def users():
+    form = AddDeleteForm()
+    if form.validate_on_submit():
+        mycursor = mydb.cursor()
+
+
+@app.route("/home", methods=["GET", "POST"])
+def home():
+    return render_template('home.html') 
+    
 # Define a User model class
 class User:
     def __init__(self, id, username, password_hash, is_admin=False):
@@ -157,6 +215,7 @@ def login():
         user = get_user(username)
         if user and check_password_hash(user.password_hash, password):
             # If the password is correct, log in the user
+            session['logged_in'] = True
             # Check if the user is an admin
             if user.is_admin:
                 session['is_admin'] = True
@@ -168,6 +227,12 @@ def login():
     else:
         # If the request method is GET, show the login page
         return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('login'))
 
 # Signup
 @app.route('/signup', methods=['GET', 'POST'])
