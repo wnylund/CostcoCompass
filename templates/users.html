@@ -8,30 +8,51 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
-    <body>
-      <div class="topnav">
-        <a href="{{ url_for('home') }}">Home</a>
-        <a href="{{ url_for('category') }}" >Categories</a>
-        <a href="{{ url_for('product') }}" >Products</a>
-        <a href="{{ url_for('customer') }}" >Customers</a>
-        <a href="{{ url_for('inventory') }}" >Inventory</a>
-        <a href="{{ url_for('product_order') }}" >Product Orders</a>
-        <a href="{{ url_for('sale') }}" >Sales</a>
-        <a href="{{ url_for('store_location') }}" >Store Locations</a>
-        <a href="{{ url_for('employee') }}" >Employees</a>
-        <a href="{{ url_for('users') }}" >Users (Admin)</a>
-        {% if session.logged_in %}
-          <a href="{{ url_for('logout') }}">Logout</a>
-        {% endif %}
-    </div>
+    <div class="topnav">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('category') }}" >Categories</a>
+      <a href="{{ url_for('product') }}" >Products</a>
+      <a href="{{ url_for('customer') }}" >Customers</a>
+      <a href="{{ url_for('inventory') }}" >Inventory</a>
+      <a href="{{ url_for('product_order') }}" >Product Orders</a>
+      <a href="{{ url_for('sale') }}" >Sales</a>
+      <a href="{{ url_for('store_location') }}" >Store Locations</a>
+      <a href="{{ url_for('employee') }}" >Employees</a>
+      <a href="{{ url_for('users') }}" >Users (Admin)</a>
+      <a href="{{ url_for('users') }}" class="right" >Users (Admin)</a>
+      {% if session.logged_in %}
+        <a href="{{ url_for('logout') }}" class="right">Logout</a>
+      {% endif %}
+  </div>
     
-        <form method="POST" action="/">
-            {{ form.csrf_token }}
-            <!---INSERT TABLE HERE and add aciton above-->
-
-
-        </form>
-    </body>
+  <form method="POST" action="/users">
+    {{ form.csrf_token }}
+    <div class="table-container">
+      <h2>Users</h2>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Is Admin</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in user_data %}
+            <tr>
+              <td>{{ row[0] }}</td>
+              <td>{{ row[1] }}</td>
+              <td>{{ row[2] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {{ form.user_id.label }}: {{ form.user_id }}
+      {{ form.username.label }}: {{ form.username }}
+      {{ form.is_admin.label }}: {{ form.is_admin }}
+      {{ form.delete_user(class="btn") }}
+    </div>
+</form>
 
 </body>
 </html>

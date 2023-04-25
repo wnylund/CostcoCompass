@@ -8,6 +8,23 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body>
+    <div class="topnav">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="{{ url_for('category') }}" >Categories</a>
+      <a href="{{ url_for('product') }}" >Products</a>
+      <a href="{{ url_for('customer') }}" >Customers</a>
+      <a href="{{ url_for('inventory') }}" >Inventory</a>
+      <a href="{{ url_for('product_order') }}" >Product Orders</a>
+      <a href="{{ url_for('sale') }}" >Sales</a>
+      <a href="{{ url_for('store_location') }}" >Store Locations</a>
+      <a href="{{ url_for('employee') }}" >Employees</a>
+      <a href="{{ url_for('users') }}" >Users (Admin)</a>
+      <a href="{{ url_for('update_account') }}" class="right" >Account</a>
+      {% if session.logged_in %}
+        <a href="{{ url_for('logout') }}" class="right">Logout</a>
+      {% endif %}
+  </div>
+  <br>
     <h1 id="big-title">Database Manager</h1>
     <br>
     <div class="table-buttons">

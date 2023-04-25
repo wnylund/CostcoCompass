@@ -1,3 +1,4 @@
+from functools import wraps
 import mysql.connector
 from flask import Flask, request, render_template, redirect, url_for, flash, session
 from flask_wtf import FlaskForm
@@ -7,6 +8,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import login_user, current_user, logout_user, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import logging
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'williscool'
 bcrypt = Bcrypt(app)
@@ -17,6 +19,22 @@ mydb = mysql.connector.connect(
   password="manager",
   database="costco"
 )
+
+def login_required(func):
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if not session.get('logged_in'):
+            return redirect(url_for('login'))
+        return func(*args, **kwargs)
+    return decorated_view
+
+def admin_required(func):
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if not session.get('is_admin'):
+            return redirect(url_for('home'))
+        return func(*args, **kwargs)
+    return decorated_view
 
 class AddDeleteForm(FlaskForm):
     # Fields for Category table
@@ -46,6 +64,9 @@ class AddDeleteForm(FlaskForm):
     #Store_Location (Inventory_id, store_id, contact_info, address) #HERE
 
     #User (id, username, isadmin) #HERE
+    user_id = StringField('User ID')
+    username = StringField('username')
+    is_admin = StringField('Is Admin')
 
     # Submit buttons
     add_category = SubmitField('Add Category')
@@ -81,6 +102,7 @@ def index():
 
 #EXAMPLE
 @app.route("/category", methods=["GET", "POST"])
+@login_required
 def category():
     form = AddDeleteForm()
     try:
@@ -112,6 +134,7 @@ def category():
     
 #EXAMPLE
 @app.route("/inventory", methods=["GET", "POST"])
+@login_required
 def inventory():
     try:
         form = AddDeleteForm()
@@ -141,6 +164,7 @@ def inventory():
         return 'Error: ' + str(e), 500
     
 @app.route("/product", methods=["GET", "POST"])
+@login_required
 def product():
     try:
         form = AddDeleteForm()
@@ -173,6 +197,7 @@ def product():
 
 #HERE
 @app.route("/customer", methods=["GET", "POST"])
+@login_required
 def customer():
     form = AddDeleteForm()
     if form.validate_on_submit():
@@ -180,6 +205,7 @@ def customer():
 
 #HERE
 @app.route("/employee", methods=["GET", "POST"])
+@login_required
 def employee():
     form = AddDeleteForm()
     if form.validate_on_submit():
@@ -187,6 +213,7 @@ def employee():
 
 #HERE
 @app.route("/product_order", methods=["GET", "POST"])
+@login_required
 def product_order():
     form = AddDeleteForm()
     if form.validate_on_submit():
@@ -194,6 +221,7 @@ def product_order():
 
 #HERE
 @app.route("/sale", methods=["GET", "POST"])
+@login_required
 def sale():
     form = AddDeleteForm()
     if form.validate_on_submit():
@@ -201,6 +229,7 @@ def sale():
 
 #HERE
 @app.route("/store_location", methods=["GET", "POST"])
+@login_required
 def store_location():
     form = AddDeleteForm()
     if form.validate_on_submit():
@@ -208,14 +237,35 @@ def store_location():
 
 #HERE
 @app.route("/users", methods=["GET", "POST"])
+@login_required
+@admin_required
 def users():
-    form = AddDeleteForm()
-    if form.validate_on_submit():
+    try:
+        form = AddDeleteForm()
+        if form.validate_on_submit():
+            mycursor = mydb.cursor()
+            # Delete user
+            if form.delete_user.data:
+                sql = "DELETE FROM Users WHERE username = %s"
+                values = (form.username.data,)
+                mycursor.execute(sql, values)
+                mydb.commit()
+            return redirect('/users')
         mycursor = mydb.cursor()
+
+        mycursor.execute("SELECT id, username, isadmin FROM Users ORDER BY id")
+        user_data = mycursor.fetchall()
+
+        return render_template('users.html', form=form, user_data=user_data)
+    except Exception as e:
+        logging.exception('Error in users(): ' + str(e))
+        return 'Error: ' + str(e), 500
 
 
 @app.route("/home", methods=["GET", "POST"])
+@login_required
 def home():
+    print(session.get('admin'))
     return render_template('home.html') 
     
 # Define a User model class
@@ -239,16 +289,47 @@ def create_user(username, password):
 # GET USER
 def get_user(username):
     cursor = mydb.cursor()
-    sql = "SELECT id, username, password_hash FROM users WHERE username = %s"
+    sql = "SELECT id, username, password_hash, isadmin FROM users WHERE username = %s"
     values = (username,)
     cursor.execute(sql, values)
     row = cursor.fetchone()
     if row:
-        user = User(row[0], row[1], row[2])
+         user = User(row[0], row[1], row[2], bool(row[3]))
     else:
         user = None
     cursor.close()
     return user
+
+
+def get_user_by_id(user_id):
+    cursor = mydb.cursor()
+    sql = "SELECT id, username, password_hash, isadmin FROM users WHERE id = %s"
+    values = (user_id,)
+    cursor.execute(sql, values)
+    row = cursor.fetchone()
+    if row:
+        user = User(row[0], row[1], row[2], bool(row[3]))
+    else:
+        user = None
+    cursor.close()
+    return user
+
+def set_admin(user):
+    cursor = mydb.cursor()
+    user.is_admin = True
+    sql = "UPDATE users SET isadmin = %s WHERE id = %s"
+    values = (user.is_admin, user.id)
+    cursor.execute(sql, values)
+    mydb.commit()
+    cursor.close()
+
+def update_user(user):
+    cursor = mydb.cursor()
+    sql = "UPDATE users SET username = %s, password_hash = %s WHERE id = %s"
+    values = (user.username, user.password_hash, user.id)
+    cursor.execute(sql, values)
+    mydb.commit()
+    cursor.close()
 
 # login
 @app.route('/login', methods=['GET', 'POST'])
@@ -257,12 +338,16 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = get_user(username)
+        print("is admin?: ", user.is_admin)
         if user and check_password_hash(user.password_hash, password):
             # If the password is correct, log in the user
-            session['logged_in'] = True
+            session['user_id'] = user.id
+            session['username'] = user.username
             # Check if the user is an admin
             if user.is_admin:
+                print("GOT HERE HECK YEAH")
                 session['is_admin'] = True
+            session['logged_in'] = True
             return redirect(url_for('home'))
         else:
             # If the password is incorrect, show an error message
@@ -271,6 +356,31 @@ def login():
     else:
         # If the request method is GET, show the login page
         return render_template('login.html')
+
+
+@app.route('/account', methods=['GET', 'POST'])
+@login_required
+def update_account():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user_id = session.get('user_id')
+        # Use the user ID to fetch the user data
+        user = get_user_by_id(user_id)
+        # Update the user data
+        if username != user.username:
+            user.username = username
+        if password:
+            user.password_hash = generate_password_hash(password)
+        # Save the updated user data to the database
+        update_user(user)
+        flash('Account updated successfully', 'success')
+        return redirect(url_for('update_account'))
+    else:
+        user_id = session.get('user_id')
+        # Use the user ID to fetch the user data
+        user = get_user_by_id(user_id)
+        return render_template('account.html', user=user)
 
 @app.route('/logout')
 def logout():
