@@ -44,9 +44,13 @@
               {% endfor %}
             </tbody>
           </table>
+          <div class="justify-content-center">
           {{ form.category_id.label }}: {{ form.category_id }}
           {{ form.category_name.label }}: {{ form.category_name }}
           {{ form.add_category(class="btn") }}
+        </div>
+        <h3>Enter Name to Delete Customer</h3>
+          {{ form.category_name_delete.label }}: {{ form.category_name_delete }}
           {{ form.delete_category(class="btn") }}
         </div>
     </form>

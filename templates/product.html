@@ -19,7 +19,7 @@
       <a href="{{ url_for('store_location') }}" >Store Locations</a>
       <a href="{{ url_for('employee') }}" >Employees</a>
       <a href="{{ url_for('users') }}" >Users (Admin)</a>
-      <a href="{{ url_for('users') }}" class="right" >Users (Admin)</a>
+      <a href="{{ url_for('update_account') }}" class="right" >Account</a>
       {% if session.logged_in %}
         <a href="{{ url_for('logout') }}" class="right">Logout</a>
       {% endif %}
@@ -52,12 +52,16 @@
                   {% endfor %}
                 </tbody>
               </table>
+              <div class="justify-content-center">
               {{ form.product_id.label }}: {{ form.product_id }}
               {{ form.category_id_2.label }}: {{ form.category_id_2 }}
               {{ form.name.label }}: {{ form.name }}
               {{ form.description.label }}: {{ form.description }}
               {{ form.price.label }}: {{ form.price }}
               {{ form.add_product(class="btn") }}
+              </div>
+              <h3>Enter Name to Delete Product</h3>
+              {{ form.name_delete.label }}: {{ form.name_delete }}
               {{ form.delete_product(class="btn") }}
             </div>
 

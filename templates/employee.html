@@ -19,19 +19,48 @@
       <a href="{{ url_for('store_location') }}" >Store Locations</a>
       <a href="{{ url_for('employee') }}" >Employees</a>
       <a href="{{ url_for('users') }}" >Users (Admin)</a>
-      <a href="{{ url_for('users') }}" class="right" >Users (Admin)</a>
+      <a href="{{ url_for('update_account') }}" class="right" >Account</a>
       {% if session.logged_in %}
         <a href="{{ url_for('logout') }}" class="right">Logout</a>
       {% endif %}
   </div>
-    
-        <form method="POST" action="/">
-            {{ form.csrf_token }}
-            <!---INSERT TABLE HERE and add aciton above-->
-
-
-        </form>
-    </body>
-
+    <form method="POST" action="/employee">
+        {{ form.csrf_token }}
+        <div class="table-container">
+          <h2>Employees</h2>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>ID</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in employee_data %}
+                <tr>
+                  <td>{{ row[0] }}</td>
+                  <td>{{ row[1] }}</td>
+                  <td>{{ row[2] }}</td>
+                  <td>{{ row[3] }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="justify-content-center">
+            {{ form.position.label }}: {{ form.position }}
+            {{ form.employee_email.label }}: {{ form.employee_email }}
+            {{ form.employee_name.label }}: {{ form.employee_name }}
+            {{ form.employee_id.label }}: {{ form.employee_id }}
+            {{ form.add_employee(class="btn") }}
+          </div>
+          <br>
+          <h3>Enter Name to Delete Customer</h3>
+          {{ form.employee_name_delete.label }}: {{ form.employee_name_delete }}
+          {{ form.delete_employee(class="btn") }}
+        </div>
+    </form>
 </body>
 </html>
+

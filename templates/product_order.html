@@ -19,18 +19,51 @@
       <a href="{{ url_for('store_location') }}" >Store Locations</a>
       <a href="{{ url_for('employee') }}" >Employees</a>
       <a href="{{ url_for('users') }}" >Users (Admin)</a>
-      <a href="{{ url_for('users') }}" class="right" >Users (Admin)</a>
+      <a href="{{ url_for('update_account') }}" class="right" >Account</a>
       {% if session.logged_in %}
         <a href="{{ url_for('logout') }}" class="right">Logout</a>
       {% endif %}
   </div>
-    
-        <form method="POST" action="/">
-            {{ form.csrf_token }}
-            <!---INSERT TABLE HERE and add aciton above-->
-
-
-        </form>
-
+    <form method="POST" action="/product_order">
+        {{ form.csrf_token }}
+        <div class="table-container">
+          <h2>Product Orders</h2>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Customer ID</th>
+                <th>Order ID</th>
+                <th>Item</th>
+                <th>Status</th>
+                <th>Order Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in product_order_data %}
+                <tr>
+                  <td>{{ row[0] }}</td>
+                  <td>{{ row[1] }}</td>
+                  <td>{{ row[2] }}</td>
+                  <td>{{ row[3] }}</td>
+                  <td>{{ row[4] }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="justify-content-center">
+            {{ form.customer_id_po.label }}: {{ form.customer_id_po }}
+            {{ form.order_id.label }}: {{ form.order_id }}
+            {{ form.item.label }}: {{ form.item }}
+            {{ form.status.label }}: {{ form.status }}
+            {{ form.order_date.label }}: {{ form.order_date }}
+            {{ form.add_product_order(class="btn") }}
+          </div>
+          <br>
+          <h3>Enter order id to Delete Customer</h3>
+          {{ form.order_id_delete.label }}: {{ form.order_id_delete }}
+          {{ form.delete_product_order(class="btn") }}
+        </div>
+    </form>
 </body>
 </html>
+

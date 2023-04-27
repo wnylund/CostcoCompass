@@ -19,18 +19,45 @@
       <a href="{{ url_for('store_location') }}" >Store Locations</a>
       <a href="{{ url_for('employee') }}" >Employees</a>
       <a href="{{ url_for('users') }}" >Users (Admin)</a>
-      <a href="{{ url_for('users') }}" class="right" >Users (Admin)</a>
+      <a href="{{ url_for('update_account') }}" class="right" >Account</a>
       {% if session.logged_in %}
         <a href="{{ url_for('logout') }}" class="right">Logout</a>
       {% endif %}
   </div>
-    
-        <form method="POST" action="/">
-            {{ form.csrf_token }}
-            <!---INSERT TABLE HERE and add aciton above-->
-
-
-        </form>
-
+    <form method="POST" action="/store_location">
+        {{ form.csrf_token }}
+        <div class="table-container">
+          <h2>Store Location</h2>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Store ID</th>
+                <th>Contact Info</th>
+                <th>Address</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in store_location_data %}
+                <tr>
+                  <td>{{ row[0] }}</td>
+                  <td>{{ row[1] }}</td>
+                  <td>{{ row[2] }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="justify-content-center">
+            {{ form.store_id.label }}: {{ form.store_id }}
+            {{ form.contact_info.label }}: {{ form.contact_info }}
+            {{ form.address.label }}: {{ form.address }}
+            {{ form.add_store_location(class="btn") }}
+          </div>
+          <br>
+          <h3>Enter sale id to Delete sale</h3>
+          {{ form.store_id_delete.label }}: {{ form.store_id_delete }}
+          {{ form.delete_store_location(class="btn") }}
+        </div>
+    </form>
 </body>
 </html>
+

@@ -42,15 +42,33 @@
             <tr>
               <td>{{ row[0] }}</td>
               <td>{{ row[1] }}</td>
-              <td>{{ row[2] }}</td>
+              <td>
+                {% if row[2] == 1 %}
+                  True
+                {% else %}
+                  False
+                {% endif %}
+              </td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
-      {{ form.user_id.label }}: {{ form.user_id }}
-      {{ form.username.label }}: {{ form.username }}
-      {{ form.is_admin.label }}: {{ form.is_admin }}
-      {{ form.delete_user(class="btn") }}
+      <div class="justify-content-center">
+        {{ form.username.label }}: {{ form.username }}
+        {{ form.delete_user(class="btn") }}
+      </div>
+      <br>
+      <div class="justify-content-center">
+        {{ form.username_set_admin.label }}: {{ form.username_set_admin }}
+        {{ form.set_admin(class="btn") }}
+      </div>
+      <br>
+      <div class="justify-content-center">
+        {{ form.username_unset_admin.label }}: {{ form.username_unset_admin }}
+        {{ form.unset_admin(class="btn") }}
+      </div>
+      
+      
     </div>
 </form>
 

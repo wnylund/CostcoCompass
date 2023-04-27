@@ -19,18 +19,51 @@
       <a href="{{ url_for('store_location') }}" >Store Locations</a>
       <a href="{{ url_for('employee') }}" >Employees</a>
       <a href="{{ url_for('users') }}" >Users (Admin)</a>
-      <a href="{{ url_for('users') }}" class="right" >Users (Admin)</a>
+      <a href="{{ url_for('update_account') }}" class="right" >Account</a>
       {% if session.logged_in %}
         <a href="{{ url_for('logout') }}" class="right">Logout</a>
       {% endif %}
   </div>
-    
-        <form method="POST" action="/">
-            {{ form.csrf_token }}
-            <!---INSERT TABLE HERE and add aciton above-->
-
-
-        </form>
-
+    <form method="POST" action="/sale">
+        {{ form.csrf_token }}
+        <div class="table-container">
+          <h2>Sales</h2>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Store Id</th>
+                <th>Date</th>
+                <th>Sale ID</th>
+                <th>Revenue</th>
+                <th>Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in sale_data %}
+                <tr>
+                  <td>{{ row[0] }}</td>
+                  <td>{{ row[1] }}</td>
+                  <td>{{ row[2] }}</td>
+                  <td>{{ row[3] }}</td>
+                  <td>{{ row[4] }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="justify-content-center">
+            {{ form.store_id.label }}: {{ form.store_id }}
+            {{ form.sale_date.label }}: {{ form.sale_date }}
+            {{ form.sale_id.label }}: {{ form.sale_id }}
+            {{ form.revenue.label }}: {{ form.revenue }}
+            {{ form.sale_quantity.label }}: {{ form.sale_quantity }}
+            {{ form.add_sale(class="btn") }}
+          </div>
+          <br>
+          <h3>Enter sale id to Delete sale</h3>
+          {{ form.sale_id_delete.label }}: {{ form.sale_id_delete }}
+          {{ form.delete_sale(class="btn") }}
+        </div>
+    </form>
 </body>
 </html>
+
