@@ -18,32 +18,31 @@
         {% endif %}
     </div>
     
-    <h1 class="text-center">View All Products and Search!</h1>
+    <div class="container">
+      <h1 class="text-center mb-4">View All Products and Search!</h1>
 
-    <form class="form-inline mb-4" method="POST">
+      <form class="form-inline mb-4" method="POST">
         <div class="form-group mr-2">
-          <label for="product_name">Search by Product Name:</label>
-        </div>
-        <div class="form-group mr-2">
+          <label for="product_name" class="mr-2">Search by Product Name:</label>
           <input type="text" class="form-control" id="product_name" name="search_term" placeholder="Enter product name">
         </div>
-        <button type="submit" class="btn btn-primary">Search</button>
-        <a href="{{ url_for('customer_view') }}" class="btn btn-primary">Reset</a>
+        <button type="submit" class="btn btn-primary mr-2">Search</button>
+        <a href="{{ url_for('customer_view') }}" class="btn btn-outline-secondary">Reset</a>
       </form>
 
-    <div class="table-container">
-    <table class = "table table-bordered table-striped">
-        <thead>
-          <tr>
-            <th>Product ID</th>
-            <th>Product Name</th>
-            <th>Product Price</th>
-            <th>Store Location</th>
-            <th>Quantity</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in results %}
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Product ID</th>
+              <th>Product Name</th>
+              <th>Product Price</th>
+              <th>Store Location</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in results %}
             <tr>
               <td>{{ row[0] }}</td>
               <td>{{ row[1] }}</td>
@@ -51,11 +50,12 @@
               <td>{{ row[3] }}</td>
               <td>{{ row[4] }}</td>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </body>
-  </html>
 
-  
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

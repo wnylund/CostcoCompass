@@ -168,7 +168,39 @@ def category():
         logging.exception('Error in category(): ' + str(e))
         return 'Error: ' + str(e), 500
     
-#EXAMPLE
+@app.route('/stats')
+def stats():
+    cursor = mydb.cursor()
+    
+    # Total number of admin users
+    cursor.execute("SELECT COUNT(*) FROM users WHERE isadmin = 1")
+    admin_count = cursor.fetchone()[0]
+
+    # Total number of non-admin users
+    cursor.execute("SELECT COUNT(*) FROM users WHERE isadmin = 0")
+    non_admin_count = cursor.fetchone()[0]
+
+    # Total number of sales
+    cursor.execute("SELECT COUNT(*) FROM sale")
+    sales_count = cursor.fetchone()[0]
+
+    # Total number of store locations
+    cursor.execute("SELECT COUNT(*) FROM store_location")
+    store_count = cursor.fetchone()[0]
+
+    # Total number of products
+    cursor.execute("SELECT COUNT(*) FROM product")
+    product_count = cursor.fetchone()[0]
+
+    cursor.close()
+
+    return render_template('stats.html', admin_count=admin_count,
+                           non_admin_count=non_admin_count,
+                           sales_count=sales_count,
+                           store_count=store_count,
+                           product_count=product_count)
+
+
 @app.route("/inventory", methods=["GET", "POST"])
 @login_required
 @admin_required
@@ -563,8 +595,11 @@ def login():
             # Check if the user is an admin
             if user.is_admin:
                 session['is_admin'] = True
-            session['logged_in'] = True
-            return redirect(url_for('home'))
+                session['logged_in'] = True
+                return redirect(url_for('home'))
+            else:
+                session['logged_in'] = True
+                return redirect(url_for('customer_view'))
         else:
             # If the password is incorrect, show an error message
             flash('Invalid username or password')
