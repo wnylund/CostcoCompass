@@ -55,6 +55,7 @@ class AddDeleteForm(FlaskForm):
     product_id_inventory = StringField('Product ID')
     quantity = StringField('Quantity')
     store_id_inventory = StringField('Store ID')
+    product_id_inventory_delete = StringField('Product ID')
 
     #Customer
     customer_id = StringField('Customer ID')
@@ -217,7 +218,7 @@ def inventory():
                 mydb.commit()
             elif form.delete_inventory.data:
                 sql = "DELETE FROM Inventory WHERE product_id = %s"
-                values = (form.product_id_inventory.data,)
+                values = (form.product_id_inventory_delete.data,)
                 mycursor.execute(sql, values)
                 mydb.commit()
             return redirect('/inventory')

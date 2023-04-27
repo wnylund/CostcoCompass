@@ -49,10 +49,15 @@
                   {% endfor %}
                 </tbody>
               </table>
+              <div class="justify-content-center">
               {{ form.product_id_inventory.label }}: {{ form.product_id_inventory }}
               {{ form.quantity.label }}: {{ form.quantity }}
               {{ form.store_id_inventory.label }}: {{ form.store_id_inventory }}
               {{ form.add_inventory(class="btn") }}
+              <button class = "btn">Update Inventory</button>
+             </div>
+             <h3>Enter Product id to Delete Inventory</h3>
+              {{ form.product_id_inventory_delete.label }}: {{ form.product_id_inventory_delete }}
               {{ form.delete_inventory(class="btn") }}
             </div>
         </form>
