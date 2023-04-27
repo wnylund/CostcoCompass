@@ -1,2 +1,2 @@
 # CostcoCompass
-Read me!
+Costco Compass GUI
